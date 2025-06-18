@@ -1,14 +1,18 @@
-FROM node:18-alpine AS build
+# Node.jsの公式イメージ（バージョン18）をベースに使用
+FROM node:18
 
+# 作業ディレクトリを/appに設定
 WORKDIR /app
-COPY package.json package-lock.json ./
+
+# package.jsonとpackage-lock.json（存在すれば）をコピー
+# 依存関係のインストールのため先にコピーすることでキャッシュを活用しやすくする
+COPY package*.json ./
+
+# 依存関係をインストール
 RUN npm install
+
+# 残りのアプリケーションコードをすべてコピー
 COPY . .
-RUN npm run build
 
-FROM nginx:stable-alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# 開発用サーバーを起動（npm run dev）
+CMD ["npm", "run", "dev"]
