@@ -37,9 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', # DRFを使うため
+    'corsheaders',    # 別ドメインとの通信を許可(CORS)
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', #受信リクエストに対してCORSチェック
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,6 +51,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Vueなど外部からのAPIアクセスを許可（開発中のみ）
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'Django.urls'
 
