@@ -10,13 +10,13 @@ db.sqlite3
 
 # Docker
 *.log
+*.pid
 
 # VSCodeやエディタ関連
 .vscode/
 *.code-workspace
 
-# Node/Vue関連（あとでVue作成時に必要）
-node_modules/
-frontend/node_modules/
-dist/
-frontend/dist/
+# OS・エディタ系
+.DS_Store
+*.swp
+*.swo
