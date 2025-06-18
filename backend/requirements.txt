@@ -1,1 +1,7 @@
 Django>=4.2,<5.0
+
+# DjangoでRESTfulなAPIを簡単に作れるライブラリ
+djangorestframework 
+
+# VueとDjangoを別サーバーで動かす場合、CORS（クロスオリジン）制限を解除
+django-cors-headers 
