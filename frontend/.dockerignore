@@ -1,0 +1,18 @@
+# 依存ファイル
+node_modules
+dist
+.vite
+
+# OS・エディタ関連
+.DS_Store
+.vscode
+*.log
+
+# Git関連
+.git
+.gitignore
+
+# npm/yarn/pnpm ロックファイル（必要に応じて）
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
