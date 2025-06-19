@@ -8,8 +8,8 @@ WORKDIR /app
 # 依存関係のインストールのため先にコピーすることでキャッシュを活用しやすくする
 COPY package*.json ./
 
-# 依存関係をインストール
-RUN npm install
+# 依存関係をインストール(キャッシュ無視してクリーンに入れる)
+RUN npm install --force
 
 # 残りのアプリケーションコードをすべてコピー
 COPY . .

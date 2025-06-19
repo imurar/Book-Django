@@ -1,0 +1,30 @@
+# Pythonキャッシュ
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 仮想環境
+venv/
+.env/
+.envrc
+
+# Djangoマイグレーションキャッシュ
+*.sqlite3
+*.log
+
+# OS・エディタ関連
+.DS_Store
+.vscode/
+*.swp
+*.swo
+
+# Git関連
+.git
+.gitignore
+
+# テスト出力
+htmlcov/
+.coverage
+*.cover
+coverage.xml
