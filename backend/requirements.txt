@@ -1,5 +1,8 @@
 Django>=4.2,<5.0
 
+#PostgreSQL に接続するためのドライバ
+psycopg2-binary
+
 # DjangoでRESTfulなAPIを簡単に作れるライブラリ
 djangorestframework 
 
