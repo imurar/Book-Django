@@ -1,15 +1,23 @@
-# Pythonの軽量バージョン
+# Pythonの軽量バージョン（提案：3.10 → 現状維持で3.11）
 FROM python:3.11-slim
 
-# 作業ディレクトリを/appに指定
+# 環境変数（提案にあったものを追加）
+# .pycファイルを生成しない（キャッシュを抑える）
+ENV PYTHONDONTWRITEBYTECODE=1
+# ログ出力を即時反映（バッファリング無効）
+ENV PYTHONUNBUFFERED=1
+
+# 作業ディレクトリを指定
 WORKDIR /app
 
-# 依存ファイルを先にコピーしてインストール
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# 依存関係のファイルをコピー
+COPY requirements.txt /app/
 
-# 残りのファイルをコピー
-COPY . .
+# pipを最新にしつつ、依存をインストール
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# サーバー起動コマンド（開発用）
+# アプリケーションコードをコピー
+COPY . /app/
+
+# Django開発サーバー起動（開発用）
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
