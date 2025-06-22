@@ -40,10 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', # DRFを使うため
     'corsheaders',    # 別ドメインとの通信を許可(CORS)
+    'books' # 自作のアプリ名
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', #受信リクエストに対してCORSチェック
+    'corsheaders.middleware.CorsMiddleware', # 受信リクエストに対してCORSチェック
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
