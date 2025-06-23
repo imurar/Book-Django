@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 依存関係をインストール(キャッシュ無視してクリーンに入れる)
-RUN npm install --force
+RUN npm install --include=dev --force
 
 # 残りのアプリケーションコードをすべてコピー
 COPY . .
