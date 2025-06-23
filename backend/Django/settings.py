@@ -55,7 +55,9 @@ MIDDLEWARE = [
 ]
 
 # Vueなど外部からのAPIアクセスを許可（開発中のみ）
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = [
+    "http://localhost:5173",  # Vite のデフォルトポート
+]
 
 ROOT_URLCONF = 'Django.urls'
 
