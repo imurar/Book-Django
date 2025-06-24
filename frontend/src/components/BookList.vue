@@ -18,4 +18,5 @@ onMounted(async () => {
       </li>
     </ul>
   </div>
+  <router-link to="/create">書籍追加</router-link>
 </template>

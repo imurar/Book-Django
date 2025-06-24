@@ -9,7 +9,7 @@ export const getBooks = async () => {
 };
 
 // 書籍を追加
-export const addBook = async (book) => {
+export const createBook = async (book) => {
   const response = await axios.post(API_BASE, book);
   return response.data;
 };
