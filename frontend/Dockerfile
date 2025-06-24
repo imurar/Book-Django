@@ -9,10 +9,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # 依存関係をインストール(キャッシュ無視してクリーンに入れる)
-RUN npm install --include=dev --force
+RUN npm install
 
 # 残りのアプリケーションコードをすべてコピー
 COPY . .
+
+# ポート開放（Vite のデフォルト）
+EXPOSE 5173
 
 # 開発用サーバーを起動（npm run dev）
 CMD ["npm", "run", "dev"]
