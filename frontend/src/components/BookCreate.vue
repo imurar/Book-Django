@@ -9,7 +9,7 @@ const router = useRouter();
 
 const handleSubmit = async () => {
   await createBook({ title: title.value, author: author.value });
-  router.push("/");
+  router.push({ name: "BookList" });
 };
 </script>
 
@@ -21,6 +21,6 @@ const handleSubmit = async () => {
       <input v-model="author" placeholder="著者" required />
       <button type="submit">追加</button>
     </form>
-    <router-link to="/">戻る</router-link>
+    <router-link :to="{ name: 'BookList' }">戻る</router-link>
   </div>
 </template>
