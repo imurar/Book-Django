@@ -8,7 +8,8 @@ const author = ref("");
 const router = useRouter();
 
 const handleSubmit = async () => {
-  await createBook({ title: title.value, author: author.value });
+  const book = { title: title.value, author: author.value };
+  await createBook(book);
   router.push({ name: "BookList" });
 };
 </script>
