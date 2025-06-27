@@ -13,3 +13,9 @@ export const createBook = async (book) => {
   const response = await axios.post(API_BASE, book);
   return response.data;
 };
+
+// 書籍を削除
+export const deleteBook = async (id) => {
+  const response = await axios.delete(`${API_BASE}${id}/`);
+  return response.data;
+};
