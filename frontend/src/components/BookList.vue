@@ -27,7 +27,7 @@ onMounted(fetchBooks);
 <template>
   <div>
     <h2>書籍一覧</h2>
-    <router-link to="/create">＋ 書籍を追加</router-link>
+    <router-link :to="{ name: 'BookCreate' }">＋ 書籍を追加</router-link>
 
     <ul v-if="books.length > 0">
       <li v-for="book in books" :key="book.id">
