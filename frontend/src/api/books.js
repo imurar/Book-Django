@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:8000/api/books/";
+const API_BASE = "http://localhost:8001/api/books/";
 
 // 書籍一覧を取得
 export const getBooks = async () => {
