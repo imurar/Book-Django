@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { createBook } from "../api/books";
+import { createBook } from "../api/books.js";
 
 const title = ref("");
 const author = ref("");
