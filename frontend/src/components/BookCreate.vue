@@ -1,14 +1,15 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { createBook } from "../api/books";
+import { createBook } from "../api/books.js";
 
 const title = ref("");
 const author = ref("");
 const router = useRouter();
 
 const handleSubmit = async () => {
-  await createBook({ title: title.value, author: author.value });
+  const book = { title: title.value, author: author.value };
+  await createBook(book);
   router.push({ name: "BookList" });
 };
 </script>
