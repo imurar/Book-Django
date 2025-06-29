@@ -19,3 +19,9 @@ export const deleteBook = async (id) => {
   const response = await axios.delete(`${API_BASE}${id}/`);
   return response.data;
 };
+
+// 単一の書籍取得
+export const getBook = async (id) => {
+  const response = await axios.get(`${API_BASE}${id}/`);
+  return response.data;
+};

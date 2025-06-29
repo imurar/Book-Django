@@ -31,7 +31,10 @@ onMounted(fetchBooks);
 
     <ul v-if="books.length > 0">
       <li v-for="book in books" :key="book.id">
-        {{ book.title }} - {{ book.author }}
+        <router-link :to="{ name: 'BookDetail', params: { id: book.id } }">
+          {{ book.title }}
+        </router-link>
+        &nbsp; - {{ book.author }}
         <button @click="handleDelete(book.id)">削除</button>
       </li>
     </ul>
