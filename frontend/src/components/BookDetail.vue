@@ -44,6 +44,7 @@ onMounted(fetchBook);
       <h2>{{ book.title }}</h2>
       <p>著者: {{ book.author }}</p>
       <p>説明: {{ book.description || "（説明なし）" }}</p>
+      <span v-if="book.status">&nbsp;[{{ book.status.name }}]</span>
       <button @click="$router.back()">＜ 戻る</button>
       <button @click="handleDelete">削除</button>
     </div>
