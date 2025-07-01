@@ -35,3 +35,9 @@ export const updateBook = async (id, data) => {
     throw new Error("書籍の更新に失敗しました。");
   }
 };
+
+// Status情報の取得
+export const getStatuses = async () => {
+  const response = await axios.get(`${API_BASE}/statuses/`);
+  return response.data;
+};
