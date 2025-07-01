@@ -28,13 +28,10 @@ export const getBook = async (id) => {
 
 // 書籍情報を部分的に更新(PATH)する処理
 export const updateBook = async (id, data) => {
-  const response = await fetch(`${API_BASE}/books/${id}/`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
+  try {
+    const response = await axios.patch(`${API_BASE}/books/${id}/`, data);
+    return response.data;
+  } catch (error) {
     throw new Error("書籍の更新に失敗しました。");
   }
-  return await response.json();
 };
