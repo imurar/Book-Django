@@ -25,3 +25,16 @@ export const getBook = async (id) => {
   const response = await axios.get(`${API_BASE}${id}/`);
   return response.data;
 };
+
+// 書籍情報を部分的に更新(PATH)する処理
+export const updateBook = async (id, data) => {
+  const response = await fetch(`${API_BASE}${id}/`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error("書籍の更新に失敗しました。");
+  }
+  return await response.json();
+};
