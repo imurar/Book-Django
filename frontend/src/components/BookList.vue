@@ -35,6 +35,7 @@ onMounted(fetchBooks);
           {{ book.title }}
         </router-link>
         &nbsp; - {{ book.author }}
+        <span v-if="book.status">&nbsp;[{{ book.status.name }}]</span>
         <button @click="handleDelete(book.id)">削除</button>
       </li>
     </ul>

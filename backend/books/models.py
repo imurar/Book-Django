@@ -9,7 +9,7 @@ class Status(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=50)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, related_name='books')
+    status = models.ForeignKey(Status, null=True, blank=True, on_delete=models.CASCADE, related_name='books')
 
     def __str__(self):
         return f"{self.title} ({self.status})"
