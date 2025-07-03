@@ -1,4 +1,3 @@
-````markdown name=README.md
 # 📚 Book-Django（本棚アプリ）
 
 Book-Django は、**Django + Django REST Framework（DRF）**と**Vue 3**による SPA 型の本棚管理アプリケーションです。  
@@ -192,4 +191,7 @@ Book-Django/
 - Docker 活用で、OS に依存せず誰でも同じ開発環境を再現可能です。
 
 ---
-````
+
+```
+
+```
