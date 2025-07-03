@@ -1,101 +1,112 @@
-# Django + PostgreSQL + Django REST Framework 環境構築ガイド
+````markdown name=README.md
+# 📚 Book-Django（本棚アプリ）
 
-このリポジトリは、Docker Compose を使って
-
-- Django（バックエンド）
-- PostgreSQL（データベース）
-- pgAdmin（DB 管理 GUI）
-- Django REST Framework（API 構築）  
-  をまとめて管理・構築できるテンプレートです。
+Book-Django は、**Django + Django REST Framework（DRF）**と**Vue 3**による SPA 型の本棚管理アプリケーションです。  
+Docker を使って開発環境を簡単に構築でき、データの永続化には PostgreSQL を採用しています。
 
 ---
 
-## セットアップ手順
+## 📌 概要
 
-### 1. `.env`ファイルを作成
+このアプリは、書籍の登録・閲覧・削除・ステータス管理（未読／読書中／読了）など、シンプルな読書記録・管理機能を提供します。将来的にはメモ・お気に入り・ログイン認証などの機能拡張も予定しています。
 
-下記内容で`.env`ファイルをプロジェクト直下に配置してください。  
-**このファイルにはパスワード等の機密情報が含まれるため、絶対にリポジトリには含めないでください。**
+---
+
+## 🛠️ 使用技術
+
+| カテゴリ           | 技術構成                                                |
+| ------------------ | ------------------------------------------------------- |
+| サーバーサイド     | Python 3.11 / Django 4.2.23 / DRF                       |
+| クライアントサイド | Vue 3.5.13 / Vite / Axios                               |
+| データベース       | PostgreSQL 15                                           |
+| その他             | Docker / docker-compose / pgAdmin / django-cors-headers |
+
+---
+
+## 🧩 アプリ構成
+
+### 🔹 Django（バックエンド）
+
+- **Book モデル**：タイトル・著者・説明・ステータス（外部キー）
+- **Status モデル**：未読／読書中／読了／気になる
+- **ViewSet/API エンドポイント**：
+  - `/api/books/` （BookViewSet）
+  - `/api/statuses/` （StatusViewSet）
+- **シリアライザー**：
+  - BookSerializer
+  - StatusSerializer
+- **ルーティング**：`DefaultRouter`を利用（`urls.py`）
+
+### 🔸 Vue（フロントエンド）
+
+- **主な画面構成**
+  - `BookList.vue`：書籍一覧
+  - `BookDetail.vue`：詳細・ステータス変更
+- **主要 API 操作（axios）**
+  - 書籍一覧取得、登録、削除、更新
+  - ステータス一覧取得
+- **ルーティング例**
+  ```js
+  const routes = [
+    { path: "/", name: "BookList", component: BookList },
+    { path: "/create", name: "BookCreate", component: BookCreate },
+    { path: "/:id", name: "BookDetail", component: BookDetail },
+    // 今後追加予定
+    { path: "/favorites", name: "Favorites", component: Favorites },
+    { path: "/login", name: "Login", component: Login },
+    { path: "/memo/:id", name: "Memo", component: Memo },
+  ];
+  ```
+
+---
+
+## 🚀 開発環境構築手順
+
+### 1. `.env`ファイルの用意
+
+リポジトリルートに`.env`ファイルを作成し、下記内容を記載してください（値は適宜変更）:
 
 ```env
-POSTGRES_USER=任意のユーザー名
-POSTGRES_PASSWORD=安全なパスワードをここに
-POSTGRES_DB=任意のDB名
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=your_db
 PGADMIN_DEFAULT_EMAIL=admin@example.com
-PGADMIN_DEFAULT_PASSWORD=安全なパスワードをここに
+PGADMIN_DEFAULT_PASSWORD=your_pgadmin_password
 ```
 
-> `.env`は.gitignore に必ず追加し、絶対にリポジトリに含めないでください。  
-> ユーザー名や DB 名も、必要に応じて本番運用時は推測されにくい値に変更しましょう。
-
-````
-
-### 2. Docker環境を用意
-
-`docker-compose.yml`には以下のようにサービスを定義します。
-
-```yaml
-version: "3.9"
-
-services:
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    ports:
-      - "5432:5432"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    env_file:
-      - .env
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
-
-  web:
-    build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    env_file:
-      - .env
-
-volumes:
-  postgres_data:
-````
+> **注意**: `.env`は`.gitignore`に追加し、リポジトリには含めないでください。
 
 ---
 
-### 3. Django 用 Dockerfile（`backend/Dockerfile`）
+### 2. Docker コンテナ起動
 
-```Dockerfile
-FROM python:3.10-slim
+```bash
+docker-compose up --build
+```
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+- **API**: [http://localhost:8001/api/books/](http://localhost:8001/api/books/)
+- **フロントエンド**: [http://localhost:5173](http://localhost:5173)
+- **pgAdmin**: [http://localhost:5050](http://localhost:5050)
 
-WORKDIR /app
+---
 
-COPY requirements.txt /app/
-RUN pip install --upgrade pip && pip install -r requirements.txt
+### 3. 初期セットアップ
 
-COPY . /app/
+```bash
+# マイグレーション
+docker-compose run web python manage.py makemigrations
+docker-compose run web python manage.py migrate
+
+# スーパーユーザー作成（任意）
+docker-compose run web python manage.py createsuperuser
 ```
 
 ---
 
-### 4. 必要パッケージを`backend/requirements.txt`に記載
+### 4. 必要パッケージ（backend/requirements.txt）
 
-```
-Django>=4.2
+```txt
+Django>=4.2,<5.0
 psycopg2-binary
 djangorestframework
 django-cors-headers
@@ -103,151 +114,82 @@ django-cors-headers
 
 ---
 
-### 5. Django プロジェクトとアプリ作成
+## 🧪 API 利用例（抜粋）
 
-```bash
-docker-compose run web django-admin startproject backend .
-docker-compose run web python manage.py startapp books
+```js
+// 書籍一覧取得
+export const getBooks = async () => {
+  const response = await axios.get(`${API_BASE}/books/`);
+  return response.data;
+};
+
+// 書籍登録
+export const createBook = async (book) => {
+  const response = await axios.post(`${API_BASE}/books/`, book);
+  return response.data;
+};
+
+// 書籍削除
+export const deleteBook = async (id) => {
+  const response = await axios.delete(`${API_BASE}/books/${id}/`);
+  return response.data;
+};
+
+// 書籍情報を更新
+export const updateBook = async (id, data) => {
+  const response = await axios.patch(`${API_BASE}/books/${id}/`, data);
+  return response.data;
+};
+
+// ステータス一覧取得
+export const getStatuses = async () => {
+  const response = await axios.get(`${API_BASE}/statuses/`);
+  return response.data;
+};
 ```
 
 ---
 
-### 6. PostgreSQL/Django REST Framework 設定（`backend/settings.py`）
+## 🧱 ディレクトリ構成（主要部分）
 
-```python
-import os
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
-        'PORT': '5432',
-    }
-}
-
-INSTALLED_APPS += [
-    'rest_framework',
-    'corsheaders',
-    'books',  # 作成したアプリ
-]
-
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    # ...既存ミドルウェア
-]
-
-CORS_ALLOW_ALL_ORIGINS = True  # 開発用（本番運用時は制限推奨）
+```
+Book-Django/
+├── backend/
+│   ├── books/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── urls.py
+│   ├── Django/
+│   │   └── settings.py
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── BookList.vue
+│   │   │   └── BookDetail.vue
+│   │   └── api/books.js
+├── docker-compose.yml
+├── .env
+└── README.md
 ```
 
 ---
 
-### 7. モデル作成例（`books/models.py`）
+## 🧭 今後追加予定の機能
 
-```python
-from django.db import models
-
-class Book(models.Model):
-    title = models.CharField(max_length=100)
-    author = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.title
-```
+- ✍️ メモ機能（自由記述）
+- 📌 フレーズ保存（お気に入りの一文）
+- 🔐 ログイン・認証（JWT / Django Auth）
+- 🔍 ISBN 自動登録
+- ⭐️ お気に入りリスト
 
 ---
 
-### 8. シリアライザー（`books/serializers.py`）
+## 📎 補足
 
-```python
-from rest_framework import serializers
-from .models import Book
-
-class BookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = '__all__'
-```
+- PostgreSQL の管理は pgAdmin（[http://localhost:5050](http://localhost:5050)）から可能です。
+- `.env`は**必ず**バージョン管理対象外にしてください。
+- Docker 活用で、OS に依存せず誰でも同じ開発環境を再現可能です。
 
 ---
-
-### 9. ビューセット（`books/views.py`）
-
-```python
-from rest_framework import viewsets
-from .models import Book
-from .serializers import BookSerializer
-
-class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-```
-
----
-
-### 10. ルーティング設定
-
-`books/urls.py`:
-
-```python
-from rest_framework.routers import DefaultRouter
-from .views import BookViewSet
-from django.urls import path, include
-
-router = DefaultRouter()
-router.register(r'books', BookViewSet)
-
-urlpatterns = [
-    path('', include(router.urls)),
-]
-```
-
-`backend/urls.py`:
-
-```python
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('books.urls')),
-]
-```
-
----
-
-### 11. マイグレーションと起動
-
-```bash
-docker-compose run web python manage.py makemigrations
-docker-compose run web python manage.py migrate
-docker-compose up
-```
-
----
-
-### 12. 動作確認
-
-- [http://localhost:8000/api/books/](http://localhost:8000/api/books/) にアクセスし、DRF の管理 UI が表示されれば動作確認 OK です。
-- pgAdmin は [http://localhost:5050](http://localhost:5050) で`.env`のメール・パスワードでログインできます。
-
----
-
-## 今後追加予定の機能
-
-- ログイン（認証、JWT 等）
-- メモ機能
-- ステータス管理
-- お気に入り登録
-
----
-
-## 注意・セキュリティ
-
-- `.env`は**絶対に**リポジトリに含めず、パスワード等の機密情報は安全に管理してください。
-- `CORS_ALLOW_ALL_ORIGINS = True`は開発用の設定です。本番運用時は必要なドメインのみ許可してください。
-- 公開リポジトリでは常にパスワードや秘密鍵が含まれていないことを確認してください。
-
----
+````
