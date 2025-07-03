@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import BookViewSet, StatusVieSet
+from .views import BookViewSet, StatusViewSet
 from django.urls import path, include
 
 router = DefaultRouter()
