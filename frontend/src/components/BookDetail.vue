@@ -1,13 +1,14 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { deleteBook, getBook } from "../api/books.js";
+import { deleteBook, getBook, getStatuses, updateBook } from "../api/books.js";
 
 const route = useRoute();
 const router = useRouter();
 const book = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const statuses = ref([]);
 
 const fetchBook = async () => {
   loading.value = true;
@@ -15,9 +16,18 @@ const fetchBook = async () => {
   try {
     book.value = await getBook(route.params.id);
   } catch (e) {
+    console.log(route.params.id);
     error.value = "書籍の取得に失敗しました";
   } finally {
     loading.value = false;
+  }
+};
+
+const fetchStatus = async () => {
+  try {
+    statuses.value = await getStatuses();
+  } catch (e) {
+    statuses.value = [];
   }
 };
 
@@ -33,7 +43,21 @@ const handleDelete = async () => {
   }
 };
 
-onMounted(fetchBook);
+const handleStatusChange = async (event) => {
+  const newStatusId = event.target.value;
+  try {
+    await updateBook(book.value.id, { status: newStatusId });
+    await fetchBook(); // ステータス変更後に再取得
+  } catch (e) {
+    alert("ステータスの更新に失敗しました");
+  }
+};
+
+//onMounted(fetchBook);
+onMounted(async () => {
+  await fetchBook();
+  await fetchStatus();
+});
 </script>
 
 <template>
@@ -44,7 +68,14 @@ onMounted(fetchBook);
       <h2>{{ book.title }}</h2>
       <p>著者: {{ book.author }}</p>
       <p>説明: {{ book.description || "（説明なし）" }}</p>
-      <span v-if="book.status">&nbsp;[{{ book.status.name }}]</span>
+      <div>
+        <label>ステータス：</label>
+        <select v-model="book.status.id" @change="handleStatusChange">
+          <option v-for="s in statuses" :key="s.id" :value="s.id">
+            {{ s.name }}
+          </option>
+        </select>
+      </div>
       <button @click="$router.back()">＜ 戻る</button>
       <button @click="handleDelete">削除</button>
     </div>
