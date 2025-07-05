@@ -9,6 +9,15 @@ const book = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const statuses = ref([]);
+const statusUpdating = ref(false);
+
+const fetchStatus = async () => {
+  try {
+    statuses.value = await getStatuses();
+  } catch (e) {
+    statuses.value = [];
+  }
+};
 
 const fetchBook = async () => {
   loading.value = true;
@@ -16,18 +25,9 @@ const fetchBook = async () => {
   try {
     book.value = await getBook(route.params.id);
   } catch (e) {
-    console.log(route.params.id);
     error.value = "書籍の取得に失敗しました";
   } finally {
     loading.value = false;
-  }
-};
-
-const fetchStatus = async () => {
-  try {
-    statuses.value = await getStatuses();
-  } catch (e) {
-    statuses.value = [];
   }
 };
 
@@ -43,13 +43,21 @@ const handleDelete = async () => {
   }
 };
 
-const handleStatusChange = async (event) => {
-  const newStatusId = event.target.value;
+// ステータス変更用のローカル状態
+const localStatusId = ref(null);
+
+const handleStatusChange = async () => {
+  if (!book.value || localStatusId.value === book.value.status.id) return;
+  statusUpdating.value = true;
   try {
-    await updateBook(book.value.id, { status: newStatusId });
+    await updateBook(book.value.id, { status_id: localStatusId.value });
     await fetchBook(); // ステータス変更後に再取得
+    localStatusId.value = book.value.status.id;
   } catch (e) {
     alert("ステータスの更新に失敗しました");
+    localStatusId.value = book.value.status.id;
+  } finally {
+    statusUpdating.value = false;
   }
 };
 
@@ -57,6 +65,12 @@ const handleStatusChange = async (event) => {
 onMounted(async () => {
   await fetchBook();
   await fetchStatus();
+
+  await nextTick();
+  // books, statuses取得後、book のステータスを選択状態
+  if (book.value && book.value.status) {
+    localStatusId.value = book.value.status.id;
+  }
 });
 </script>
 
@@ -70,11 +84,16 @@ onMounted(async () => {
       <p>説明: {{ book.description || "（説明なし）" }}</p>
       <div>
         <label>ステータス：</label>
-        <select v-model="book.status.id" @change="handleStatusChange">
+        <select
+          v-model="localStatusId"
+          @change="handleStatusChange"
+          :disabled="statusUpdating"
+        >
           <option v-for="s in statuses" :key="s.id" :value="s.id">
             {{ s.name }}
           </option>
         </select>
+        <span v-if="statusUpdating" style="margin-left: 8px">更新中...</span>
       </div>
       <button @click="$router.back()">＜ 戻る</button>
       <button @click="handleDelete">削除</button>
